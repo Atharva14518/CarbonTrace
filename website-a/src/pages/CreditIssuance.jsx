@@ -88,9 +88,11 @@ export default function CreditIssuance() {
 
   return (
     <div className="space-y-4">
-      <div className="mb-4">
-        <h1 className="text-lg font-bold text-gov-navy border-b-2 border-gov-orange pb-2">Carbon Credit Issuance</h1>
-        <p className="text-xs text-gray-500 mt-1">Calculate, approve, and issue tCO2 credits with blockchain verification</p>
+      <div className="flex items-center justify-between mb-6">
+        <div>
+          <h1 className="text-xl font-bold text-ct-text">Carbon Credit Issuance</h1>
+          <p className="text-ct-muted text-sm mt-0.5">Calculate, approve, and issue tCO2 credits with blockchain verification</p>
+        </div>
       </div>
 
       {error && (
@@ -169,14 +171,14 @@ export default function CreditIssuance() {
       </div>
 
       {/* Credit Calculation Table */}
-      <div className="gov-card">
+      <div className="ct-card overflow-hidden">
         <div className="gov-card-header">
           <div className="flex items-center gap-2">
             <Calculator size={14} />
             <h3 className="text-sm font-semibold">Credit Calculation per Land Parcel</h3>
           </div>
         </div>
-        <table className="gov-table">
+        <table className="ct-table">
           <thead>
             <tr>
               <th>Land ID</th>
@@ -219,7 +221,7 @@ export default function CreditIssuance() {
                     )}
                   </td>
                   <td>
-                    <span className={l.status === 'VERIFIED' ? 'badge-verified' : 'badge-pending'}>
+                    <span className={l.status === 'VERIFIED' ? 'ct-badge-verified' : 'ct-badge-pending'}>
                       {l.status === 'VERIFIED' ? <CheckCircle2 size={10} className="mr-1" /> : null}
                       {l.status?.replace('_', ' ')}
                     </span>

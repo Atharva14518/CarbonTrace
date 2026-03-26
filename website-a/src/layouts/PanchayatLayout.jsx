@@ -36,7 +36,7 @@ export default function PanchayatLayout() {
     : '??';
 
   return (
-    <div className="flex h-screen overflow-hidden bg-gov-navy">
+    <div className="flex h-screen overflow-hidden bg-gov-bg">
       {/* Sidebar */}
       <aside className="w-60 flex-shrink-0 bg-gov-surface border-r border-gov-border flex flex-col">
         {/* Logo */}
@@ -60,7 +60,7 @@ export default function PanchayatLayout() {
               to={to}
               className={({ isActive }) =>
                 isActive
-                  ? 'flex items-center gap-2.5 px-3 py-2 text-sm font-medium text-gov-navy bg-amber-400 transition-colors'
+                  ? 'flex items-center gap-2.5 px-3 py-2 text-sm font-medium text-amber-900 bg-amber-100 border-l-2 border-amber-600 transition-colors'
                   : 'flex items-center gap-2.5 px-3 py-2 text-sm font-medium text-text-secondary hover:text-text-primary hover:bg-gov-slate transition-colors'
               }
             >
@@ -112,7 +112,7 @@ export default function PanchayatLayout() {
         </header>
 
         {/* Page Content */}
-        <main className="flex-1 overflow-y-auto p-6 bg-gov-navy">
+        <main className="flex-1 overflow-y-auto p-6 bg-gov-bg">
           <Outlet />
         </main>
       </div>

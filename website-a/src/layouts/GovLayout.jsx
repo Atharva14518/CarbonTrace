@@ -7,7 +7,6 @@ import {
   Satellite,
   Coins,
   Wallet,
-  Globe,
   Shield,
   LogOut,
   Bell,
@@ -55,149 +54,118 @@ export default function GovLayout() {
   const currentPageTitle = navItems.find((item) => item.path === location.pathname)?.label || 'Portal';
 
   return (
-    <div className="min-h-screen bg-gov-bg text-[#1a1a2e]">
-      {/* Top strip */}
-      <div className="bg-gov-dark h-8 flex items-center px-4 border-b-2 border-gov-orange">
-        <div className="w-6 h-6 bg-orange-400 flex items-center justify-center text-white text-xs font-bold mr-2">
-          IN
-        </div>
-        <span className="text-white text-xs font-semibold tracking-wide">GOVERNMENT OF INDIA</span>
-        <span className="text-gray-400 text-xs mx-3">|</span>
-        <span className="text-gray-300 text-xs">Ministry of Environment, Forest &amp; Climate Change</span>
-        <div className="ml-auto flex items-center gap-4">
-          <span className="text-gray-300 text-xs">Screen Reader Access</span>
-          <span className="text-gray-300 text-xs">|</span>
-          <span className="text-gray-300 text-xs">Skip to Main Content</span>
-          <span className="text-gray-300 text-xs">|</span>
-          <span className="text-gray-300 text-xs">हिंदी</span>
-        </div>
-      </div>
-
-      {/* Header */}
-      <div className="bg-white h-16 flex items-center px-6 border-b-2 border-gov-orange shadow-sm">
-        <div className="flex items-center gap-3">
-          <div className="w-12 h-12 bg-gov-navy flex items-center justify-center">
-            <span className="text-white text-lg font-bold">CT</span>
-          </div>
-          <div>
-            <div className="text-gov-navy text-base font-bold tracking-wide">CarbonTrace</div>
-            <div className="text-gray-500 text-xs">National Blue Carbon MRV Registry</div>
-          </div>
-        </div>
-
-        <div className="mx-auto text-center hidden lg:block">
-          <div className="text-gov-navy text-xs font-bold uppercase tracking-widest">
-            MISHTI Mission - Mangrove Initiative
-          </div>
-          <div className="text-gray-400 text-xs">
-            Monitoring, Reporting and Verification Platform
-          </div>
-        </div>
-
-        <div className="ml-auto flex items-center gap-3">
-          <WalletConnect />
-          <button className="relative text-gray-500 hover:text-gov-navy transition-colors">
-            <Bell size={16} />
-            <span className="absolute -top-1 -right-1 w-3.5 h-3.5 bg-[#c0392b] text-[9px] font-bold text-white flex items-center justify-center">
-              3
-            </span>
-          </button>
-          <div className="h-5 w-px bg-gov-border" />
-          <div className="text-right">
-            <div className="text-xs font-semibold text-gov-navy">{user?.name || 'Loading...'}</div>
-            <div className="text-[11px] text-gray-500">{user?.state || user?.district || 'National View'}</div>
-          </div>
-          <button
-            onClick={handleLogout}
-            className="text-gray-500 hover:text-[#c0392b] transition-colors"
-            title="Logout"
-          >
-            <LogOut size={14} />
-          </button>
-        </div>
-      </div>
-
-      {/* Horizontal nav */}
-      <nav className="bg-gov-navy h-9 flex items-center px-4 border-b border-gov-blue overflow-x-auto">
-        {navItems.map((item) => (
-          <NavLink
-            key={item.path}
-            to={item.path}
-            className={({ isActive }) =>
-              `flex items-center gap-1.5 px-4 h-9 text-xs font-semibold transition-colors border-b-2 whitespace-nowrap ${
-                isActive
-                  ? 'text-white border-gov-orange bg-gov-dark'
-                  : 'text-gray-300 border-transparent hover:text-white hover:bg-[#0a2255]'
-              }`
-            }
-          >
-            <item.icon size={13} />
-            {item.label}
-          </NavLink>
-        ))}
-      </nav>
-
-      {/* Content shell */}
-      <div className="flex min-h-[calc(100vh-68px)]">
-        <aside className="w-56 bg-white border-r border-gov-border min-h-screen">
-          <div className="bg-gov-table border-b border-gov-border px-4 py-3">
-            <div className="text-xs text-gray-500 uppercase tracking-wide font-semibold">
-              Logged in as
+    <div className="flex h-screen overflow-hidden bg-ct-bg">
+      {/* ── SIDEBAR ─────────────────────────────── */}
+      <aside className="w-64 flex-shrink-0 bg-ct-surface border-r border-ct-border flex flex-col">
+        {/* Logo */}
+        <div className="h-16 flex items-center px-5 border-b border-ct-border">
+          <div className="flex items-center gap-3">
+            <div className="w-9 h-9 rounded-lg bg-gradient-cyan flex items-center justify-center shadow-glow-cyan">
+              <span className="text-ct-surface font-bold text-sm">CT</span>
             </div>
-            <div className="text-gov-navy font-bold text-sm mt-0.5">
-              {user?.name || 'Loading...'}
-            </div>
-            <div className="text-xs text-gov-blue mt-0.5">
-              {user?.role || '—'} - {user?.state || user?.district || 'National View'}
+            <div>
+              <p className="text-ct-text font-bold text-sm leading-none">CarbonTrace</p>
+              <p className="text-ct-muted text-[10px] mt-0.5 uppercase tracking-widest">
+                MRV Portal
+              </p>
             </div>
           </div>
+        </div>
 
-          {navItems.map((item) => (
+        {/* Government strip */}
+        <div className="px-4 py-2.5 border-b border-ct-border bg-ct-bg/50">
+          <div className="flex items-center gap-2">
+            <div className="w-4 h-4 rounded-full bg-gradient-saffron flex-shrink-0" />
+            <p className="text-[10px] text-ct-muted uppercase tracking-wide leading-tight">
+              Govt. of India — MISHTI Mission
+            </p>
+          </div>
+        </div>
+
+        {/* Navigation */}
+        <nav className="flex-1 py-4 px-3 space-y-1 overflow-y-auto">
+          <p className="ct-section-title px-2">Main Menu</p>
+          {navItems.map(({ path, label, icon: Icon }) => (
             <NavLink
-              key={item.path}
-              to={item.path}
+              key={path}
+              to={path}
               className={({ isActive }) =>
-                `flex items-center gap-3 px-4 py-2.5 text-xs border-b border-gray-100 transition-colors ${
+                `flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-all duration-150 group ${
                   isActive
-                    ? 'bg-gov-table text-gov-navy font-bold border-l-4 border-l-gov-orange'
-                    : 'text-gray-600 hover:bg-gray-50 hover:text-gov-navy'
+                    ? 'bg-ct-cyan/10 text-ct-cyan border border-ct-cyan/20'
+                    : 'text-ct-muted hover:text-ct-text hover:bg-ct-hover'
                 }`
               }
             >
-              <item.icon size={14} />
-              {item.label}
+              {({ isActive }) => (
+                <>
+                  <Icon
+                    size={16}
+                    className={
+                      isActive ? 'text-ct-cyan' : 'text-ct-muted group-hover:text-ct-subtle'
+                    }
+                  />
+                  <span className="font-medium">{label}</span>
+                  {isActive && <div className="ml-auto w-1.5 h-1.5 rounded-full bg-ct-cyan" />}
+                </>
+              )}
             </NavLink>
           ))}
+        </nav>
 
-          <NavLink
-            to="/public"
-            className="flex items-center gap-3 px-4 py-2.5 text-xs border-b border-gray-100 text-gray-600 hover:bg-gray-50 hover:text-gov-navy transition-colors"
-          >
-            <Globe size={14} />
-            Public View
-          </NavLink>
-        </aside>
+        {/* User card at bottom */}
+        <div className="p-4 border-t border-ct-border">
+          <div className="flex items-center gap-3 p-3 rounded-lg bg-ct-bg/50 border border-ct-border">
+            <div className="w-8 h-8 rounded-full bg-gradient-saffron flex items-center justify-center flex-shrink-0">
+              <span className="text-white font-bold text-xs">{initials}</span>
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="text-ct-text text-xs font-semibold truncate">{user?.name}</p>
+              <p className="text-ct-muted text-[10px] uppercase tracking-wide">{user?.role}</p>
+            </div>
+            <button onClick={handleLogout} className="text-ct-muted hover:text-ct-red transition-colors">
+              <LogOut size={14} />
+            </button>
+          </div>
+        </div>
+      </aside>
 
-        <main className="flex-1 bg-gov-bg min-h-screen">
-          <div className="bg-white border-b border-gov-border px-6 py-2 flex items-center gap-2 text-xs text-gray-500">
-            <span>Home</span>
+      {/* ── MAIN CONTENT ────────────────────────── */}
+      <div className="flex-1 flex flex-col overflow-hidden">
+        {/* Top bar */}
+        <header className="h-14 bg-ct-surface border-b border-ct-border flex items-center justify-between px-6 flex-shrink-0">
+          <div className="flex items-center gap-2 text-xs text-ct-muted">
+            <span>Portal</span>
             <ChevronRight size={12} />
-            <span className="text-gov-navy font-semibold">{currentPageTitle}</span>
+            <span className="text-ct-text font-medium">{currentPageTitle}</span>
           </div>
-          <div className="p-6">
-            <Outlet />
+
+          <div className="flex items-center gap-3">
+            <div className="flex items-center gap-1.5">
+              <div className="ct-live-dot" />
+              <span className="text-[10px] text-ct-muted uppercase tracking-wide">Sepolia</span>
+            </div>
+
+            <div className="w-px h-4 bg-ct-border" />
+
+            <WalletConnect />
+
+            <button className="relative w-8 h-8 rounded-lg bg-ct-hover border border-ct-border flex items-center justify-center text-ct-muted hover:text-ct-text transition-colors">
+              <Bell size={14} />
+              <span className="absolute top-1 right-1 w-1.5 h-1.5 rounded-full bg-ct-saffron" />
+            </button>
+
+            <span className="ct-badge-verified text-[10px]">
+              {user?.state || 'National'}
+            </span>
           </div>
+        </header>
+
+        {/* Page content */}
+        <main className="flex-1 overflow-y-auto p-6 animate-fade-in">
+          <Outlet />
         </main>
       </div>
-
-      <footer className="bg-gov-dark text-gray-400 text-xs py-3 px-6 flex items-center justify-between border-t-2 border-gov-orange">
-        <span>
-          © 2026 CarbonTrace MRV Platform | Government of India
-        </span>
-        <span>
-          Powered by ISRO Bhuvan | Ethereum Sepolia | Pinata IPFS
-        </span>
-      </footer>
     </div>
   );
 }

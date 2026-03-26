@@ -96,13 +96,15 @@ export default function Dashboard() {
 
   return (
     <div className="space-y-4">
-      <div className="mb-4">
-        <h1 className="text-lg font-bold text-gov-navy border-b-2 border-gov-orange pb-2">
+      <div className="flex items-center justify-between mb-6">
+        <div>
+        <h1 className="text-xl font-bold text-ct-text">
           National Blue Carbon Registry Dashboard
         </h1>
-        <p className="text-xs text-gray-500 mt-1">
+        <p className="text-ct-muted text-sm mt-0.5">
           Real-time monitoring of carbon credit generation across India's coastal restoration projects
         </p>
+        </div>
       </div>
 
       <div className="flex items-center justify-end text-xs text-gray-500">
@@ -110,24 +112,96 @@ export default function Dashboard() {
         <span>Last synced: {new Date().toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' })}</span>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-        {statCards.map(({ label, value, icon: Icon, color }) => (
-          <div key={label} className={`gov-card border-t-4 ${color}`}>
-            <div className="p-4">
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-xs text-gray-500 font-semibold uppercase tracking-wide">{label}</span>
-                <Icon size={16} className="text-gray-400" />
+      <div className="grid grid-cols-4 gap-4 mb-6">
+        {[
+          {
+            label: 'Total Registered Lands',
+            value: stats?.totalLands || 0,
+            icon: MapPin,
+            variant: 'cyan',
+            suffix: 'parcels'
+          },
+          {
+            label: 'Credits Issued',
+            value: credits?.total_issued || 0,
+            icon: Coins,
+            variant: 'emerald',
+            suffix: 'CC'
+          },
+          {
+            label: 'Pending Requests',
+            value: stats?.pendingRequests || 0,
+            icon: Clock,
+            variant: 'amber',
+            suffix: 'pending'
+          },
+          {
+            label: 'Total Payouts',
+            value: `₹${fmt(stats?.totalPayouts || 0)}`,
+            icon: Wallet,
+            variant: 'saffron',
+            suffix: 'disbursed'
+          },
+        ].map((card, i) => (
+          <div key={i} className={`ct-stat-card ${card.variant}`}>
+            {/* Background glow */}
+            <div
+              className={`absolute inset-0 opacity-5 rounded-xl ${
+                card.variant === 'cyan'
+                  ? 'bg-ct-cyan'
+                  : card.variant === 'emerald'
+                    ? 'bg-ct-emerald'
+                    : card.variant === 'amber'
+                      ? 'bg-ct-amber'
+                      : 'bg-ct-saffron'
+              }`}
+            />
+
+            <div className="relative">
+              <div className="flex items-center justify-between mb-3">
+                <p className="text-ct-muted text-xs font-medium uppercase tracking-wider">
+                  {card.label}
+                </p>
+                <div
+                  className={`w-8 h-8 rounded-lg flex items-center justify-center ${
+                    card.variant === 'cyan'
+                      ? 'bg-ct-cyan/10 text-ct-cyan'
+                      : card.variant === 'emerald'
+                        ? 'bg-ct-emerald/10 text-ct-emerald'
+                        : card.variant === 'amber'
+                          ? 'bg-ct-amber/10 text-ct-amber'
+                          : 'bg-ct-saffron/10 text-ct-saffron'
+                  }`}
+                >
+                  <card.icon size={16} />
+                </div>
               </div>
-              <div className="text-2xl font-bold text-gov-navy">{value}</div>
+
+              <p
+                className={`text-3xl font-bold mb-1 ${
+                  card.variant === 'cyan'
+                    ? 'text-ct-cyan'
+                    : card.variant === 'emerald'
+                      ? 'text-ct-emerald'
+                      : card.variant === 'amber'
+                        ? 'text-ct-amber'
+                        : 'text-ct-saffron'
+                }`}
+              >
+                {card.value}
+              </p>
+              <p className="text-ct-muted text-xs">
+                {card.suffix}
+              </p>
             </div>
           </div>
         ))}
       </div>
 
-      <div className="gov-card mb-4 p-0 overflow-hidden">
-        <div className="gov-card-header">
+      <div className="ct-card mb-4 p-0 overflow-hidden">
+        <div className="px-4 py-3 border-b border-ct-border flex items-center justify-between">
           <span>Project Location Map - Registered Land Parcels</span>
-          <span className="text-xs text-gray-300 font-normal">Source: ISRO Bhuvan</span>
+          <span className="text-xs text-ct-muted font-normal">Source: ISRO Bhuvan</span>
         </div>
         <div className="h-80">
           <MapContainer
@@ -159,14 +233,14 @@ export default function Dashboard() {
         </div>
       </div>
 
-      <div className="gov-card p-0">
-        <div className="gov-card-header">
+      <div className="ct-card p-0 overflow-hidden">
+        <div className="px-4 py-3 border-b border-ct-border flex items-center justify-between">
           <span>Recent Land Registrations</span>
-          <NavLink to="/gov/land-requests" className="text-xs text-gov-orange hover:underline">
+          <NavLink to="/gov/land-requests" className="text-xs text-ct-cyan hover:underline">
             View All →
           </NavLink>
         </div>
-        <table className="gov-table">
+        <table className="ct-table">
           <thead>
             <tr>
               <th>Land ID</th>
@@ -185,13 +259,13 @@ export default function Dashboard() {
                 <td>{land.landRequest?.district || land.landRequest?.location_description || '—'}</td>
                 <td>{land.landRequest?.area_hectares || '—'}</td>
                 <td>
-                  <span className={
-                    land.status === 'VERIFIED'
-                      ? 'badge-verified'
-                      : land.status === 'ACTIVE'
-                        ? 'badge-approved'
-                        : 'badge-pending'
-                  }>
+                    <span className={
+                      land.status === 'VERIFIED'
+                        ? 'ct-badge-verified'
+                        : land.status === 'ACTIVE'
+                          ? 'ct-badge-approved'
+                          : 'ct-badge-pending'
+                    }>
                     {land.status}
                   </span>
                 </td>
@@ -206,7 +280,7 @@ export default function Dashboard() {
                       {land.blockchain_hash.slice(0, 8)}...{land.blockchain_hash.slice(-6)}
                     </a>
                   ) : (
-                    <span className="badge-pending">Pending Chain</span>
+                    <span className="ct-badge-pending">Pending Chain</span>
                   )}
                 </td>
               </tr>

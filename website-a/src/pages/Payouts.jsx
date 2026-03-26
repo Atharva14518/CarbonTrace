@@ -26,9 +26,11 @@ export default function Payouts() {
 
   return (
     <div className="space-y-4">
-      <div className="mb-4">
-        <h1 className="text-lg font-bold text-gov-navy border-b-2 border-gov-orange pb-2">NGO / Panchayat Payouts</h1>
-        <p className="text-xs text-gray-500 mt-1">Quality-based payout tracking via Razorpay</p>
+      <div className="flex items-center justify-between mb-6">
+        <div>
+          <h1 className="text-xl font-bold text-ct-text">NGO / Panchayat Payouts</h1>
+          <p className="text-ct-muted text-sm mt-0.5">Quality-based payout tracking via Razorpay</p>
+        </div>
       </div>
 
       {/* Summary */}
@@ -57,8 +59,8 @@ export default function Payouts() {
       </div>
 
       {/* Table */}
-      <div className="gov-card">
-        <table className="gov-table">
+      <div className="ct-card overflow-hidden">
+        <table className="ct-table">
           <thead>
             <tr>
               <th>Payout #</th>
@@ -88,7 +90,7 @@ export default function Payouts() {
                     </span>
                   </td>
                   <td>
-                    <span className={p.status === 'COMPLETED' ? 'badge-approved' : p.status === 'FAILED' ? 'badge-rejected' : 'badge-pending'}>
+                    <span className={p.status === 'COMPLETED' ? 'ct-badge-approved' : p.status === 'FAILED' ? 'ct-badge-rejected' : 'ct-badge-pending'}>
                       <StIcon size={10} className="mr-1" />
                       {p.status}
                     </span>

@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Eye, EyeOff, AlertTriangle } from 'lucide-react';
+import { AlertTriangle } from 'lucide-react';
+import api from '../utils/api';
 
 function redirectAfterLogin(role) {
   if (role === 'GOVERNMENT') return '/gov/dashboard';
@@ -13,7 +14,6 @@ export default function Login() {
   const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
@@ -23,24 +23,11 @@ export default function Login() {
     setError('');
 
     try {
-      const res = await fetch('/api/gov/auth/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password }),
-      });
-
-      // Safe JSON parse — handles empty body or non-JSON responses
-      let data = {};
-      const text = await res.text();
-      try {
-        data = text ? JSON.parse(text) : {};
-      } catch {
-        throw new Error(`Server returned an unexpected response (${res.status}). Please try again.`);
-      }
-
-      if (!res.ok) {
-        throw new Error(data.message || `Authentication failed (${res.status})`);
-      }
+      const { data } = await api.post(
+        '/gov/auth/login',
+        { email, password },
+        { timeout: 12000 }
+      );
 
       localStorage.setItem('token', data.token);
       localStorage.setItem('user', JSON.stringify(data.user));
@@ -49,7 +36,13 @@ export default function Login() {
       }
       navigate(redirectAfterLogin(data.user.role));
     } catch (err) {
-      setError(err.message);
+      if (err.code === 'ECONNABORTED') {
+        setError('Authentication request timed out. Please check backend/DB and try again.');
+      } else if (!err.response) {
+        setError('Unable to reach server. Please ensure backend is running on port 5001.');
+      } else {
+        setError(err.response?.data?.message || err.message || 'Authentication failed');
+      }
     } finally {
       setLoading(false);
     }
@@ -57,126 +50,116 @@ export default function Login() {
 
 
   return (
-    <div className="min-h-screen bg-gov-bg">
-      <div className="bg-gov-dark h-8 flex items-center px-6 border-b-2 border-gov-orange">
-        <span className="text-white text-xs font-semibold">GOVERNMENT OF INDIA</span>
-        <span className="text-gray-300 text-xs ml-4">
-          Ministry of Environment, Forest &amp; Climate Change
+    <div className="min-h-screen bg-ct-bg flex flex-col">
+      {/* Government top strip */}
+      <div className="bg-ct-surface border-b border-ct-border py-2 px-6 flex items-center gap-3">
+        <div className="flex items-center gap-2">
+          <div className="w-3 h-3 rounded-full bg-ct-saffron" />
+          <div className="w-3 h-3 rounded-full bg-white/20" />
+          <div className="w-3 h-3 rounded-full bg-ct-india" />
+        </div>
+        <span className="text-ct-muted text-xs uppercase tracking-widest">
+          Government of India — Ministry of Environment, Forest &amp; Climate Change
         </span>
       </div>
 
-      <div className="bg-white border-b-2 border-gov-orange py-4 px-6 flex items-center gap-4">
-        <div className="w-16 h-16 bg-gov-navy flex items-center justify-center">
-          <span className="text-white text-2xl font-bold">CT</span>
-        </div>
-        <div>
-          <div className="text-gov-navy text-xl font-bold">CarbonTrace</div>
-          <div className="text-gray-500 text-sm">National Blue Carbon MRV Registry Portal</div>
-          <div className="text-gray-400 text-xs">
-            Under MISHTI Mission - Mangrove Initiative for Shoreline Habitats &amp; Tangible Incomes
-          </div>
-        </div>
-      </div>
-
-      <div className="flex justify-center items-start pt-12 px-4 pb-28">
+      {/* Main content */}
+      <div className="flex-1 flex items-center justify-center px-4 py-12">
         <div className="w-full max-w-md">
-          <div className="gov-card">
-            <div className="gov-card-header">
-              <span>User Login</span>
+          {/* Logo + title */}
+          <div className="text-center mb-8">
+            <div className="w-16 h-16 rounded-2xl bg-gradient-cyan mx-auto mb-4 flex items-center justify-center shadow-glow-cyan">
+              <span className="text-ct-surface font-bold text-2xl">CT</span>
             </div>
-            <div className="p-6">
+            <h1 className="text-2xl font-bold text-ct-text mb-1">CarbonTrace</h1>
+            <p className="text-ct-muted text-sm">National Blue Carbon MRV Registry Portal</p>
+            <p className="text-ct-muted/60 text-xs mt-1">
+              MISHTI Mission — Mangrove Initiative for Shoreline Habitats
+            </p>
+          </div>
+
+          {/* Login card */}
+          <div className="ct-card p-6">
+            <h2 className="text-ct-text font-semibold text-base mb-5">
+              Sign in to Portal
+            </h2>
+
+            <form onSubmit={handleSubmit} className="space-y-4">
+              <div>
+                <label className="block text-xs font-medium text-ct-muted uppercase tracking-wide mb-1.5">
+                  Email Address
+                </label>
+                <input
+                  type="email"
+                  value={email}
+                  onChange={e => setEmail(e.target.value)}
+                  className="ct-input w-full"
+                  placeholder="you@gov.in"
+                  required
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-medium text-ct-muted uppercase tracking-wide mb-1.5">
+                  Password
+                </label>
+                <input
+                  type="password"
+                  value={password}
+                  onChange={e => setPassword(e.target.value)}
+                  className="ct-input w-full"
+                  placeholder="••••••••"
+                  required
+                />
+              </div>
+
               {error && (
-                <div className="mb-4 flex items-center gap-2 bg-red-50 border border-red-200 px-3 py-2 text-xs text-red-700">
-                  <AlertTriangle size={14} />
-                  <span>{error}</span>
-                </div>
+                <p className="text-ct-red text-xs bg-ct-red/10 border border-ct-red/20 rounded-lg px-3 py-2 flex items-center gap-2">
+                  <AlertTriangle size={12} />
+                  {error}
+                </p>
               )}
 
-              <form onSubmit={handleSubmit}>
-                <div className="mb-4">
-                  <label className="block text-xs font-semibold text-gray-600 mb-1 uppercase tracking-wide">
-                    Email Address *
-                  </label>
-                  <input
-                    type="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    className="w-full border border-gov-border px-3 py-2 text-sm focus:outline-none focus:border-gov-blue bg-white"
-                    placeholder="Enter your email"
-                    required
-                  />
-                </div>
+              <button type="submit" disabled={loading} className="w-full ct-btn-primary py-2.5 disabled:opacity-50">
+                {loading ? 'Signing in...' : 'Sign In'}
+              </button>
+            </form>
+          </div>
 
-                <div className="mb-6">
-                  <label className="block text-xs font-semibold text-gray-600 mb-1 uppercase tracking-wide">
-                    Password *
-                  </label>
-                  <div className="relative">
-                    <input
-                      type={showPassword ? 'text' : 'password'}
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
-                      className="w-full border border-gov-border px-3 py-2 pr-10 text-sm focus:outline-none focus:border-gov-blue bg-white"
-                      placeholder="Enter your password"
-                      required
-                    />
-                    <button
-                      type="button"
-                      onClick={() => setShowPassword(!showPassword)}
-                      className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gov-navy"
-                    >
-                      {showPassword ? <EyeOff size={14} /> : <Eye size={14} />}
-                    </button>
-                  </div>
-                </div>
-
-                <button type="submit" disabled={loading} className="w-full btn-gov py-2 text-sm disabled:opacity-50">
-                  {loading ? 'Authenticating...' : 'Login to Portal'}
+          {/* Demo credentials */}
+          <div className="mt-4 ct-card p-4">
+            <p className="ct-section-title">Demo Credentials</p>
+            <div className="space-y-2">
+              {[
+                { role: 'Government', email: 'rajesh@gov.in', pass: 'admin123', color: 'text-ct-cyan' },
+                { role: 'Panchayat', email: 'ratnagiri@panch.in', pass: 'panch123', color: 'text-ct-emerald' },
+                { role: 'NGO', email: 'coastal@ngo.in', pass: 'ngo123', color: 'text-ct-amber' },
+              ].map((cred) => (
+                <button
+                  key={cred.role}
+                  onClick={() => {
+                    setEmail(cred.email);
+                    setPassword(cred.pass);
+                  }}
+                  className="w-full flex items-center justify-between p-2.5 rounded-lg bg-ct-bg border border-ct-border hover:border-ct-cyan/30 hover:bg-ct-hover transition-all text-left group"
+                >
+                  <span className={`text-xs font-semibold ${cred.color}`}>
+                    {cred.role}
+                  </span>
+                  <span className="text-ct-muted text-xs font-mono group-hover:text-ct-subtle">
+                    {cred.email}
+                  </span>
                 </button>
-              </form>
+              ))}
             </div>
+            <p className="text-ct-muted/60 text-[10px] mt-2 text-center">Click any row to auto-fill</p>
           </div>
 
-          <div className="mt-4 bg-blue-50 border border-blue-200 p-4 text-xs">
-            <div className="font-bold text-gov-navy mb-2 uppercase tracking-wide">
-              Demo Credentials
-            </div>
-            <table className="w-full">
-              <tbody>
-                {[
-                  ['Government', 'rajesh@gov.in', 'admin123'],
-                  ['Panchayat', 'ratnagiri@panch.in', 'panch123'],
-                  ['NGO', 'coastal@ngo.in', 'ngo123'],
-                ].map(([role, demoEmail, pass]) => (
-                  <tr
-                    key={role}
-                    className="cursor-pointer hover:bg-blue-100"
-                    onClick={() => {
-                      setEmail(demoEmail);
-                      setPassword(pass);
-                    }}
-                  >
-                    <td className="py-1 font-semibold text-gov-navy w-24">{role}</td>
-                    <td className="py-1 text-gray-600">{demoEmail}</td>
-                    <td className="py-1 text-gray-400">{pass}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-            <div className="text-gray-400 mt-2">Click a row to auto-fill credentials</div>
-          </div>
-
-          <div className="mt-4 text-center text-xs text-gray-400">
-            This portal is for authorized government officials, NGOs and Gram Panchayats only.
-            <br />
-            For technical support contact: support@nccr.gov.in
-          </div>
+          {/* Footer */}
+          <p className="text-center text-ct-muted/50 text-xs mt-6">
+            Secured by Ethereum Sepolia · IPFS · ISRO Bhuvan
+          </p>
         </div>
-      </div>
-
-      <div className="fixed bottom-0 w-full bg-gov-dark text-gray-400 text-xs py-2 px-6 flex justify-between border-t-2 border-gov-orange">
-        <span>© 2026 CarbonTrace | Government of India</span>
-        <span>Best viewed in Chrome/Firefox | Powered by ISRO Bhuvan &amp; Ethereum</span>
       </div>
     </div>
   );

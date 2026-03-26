@@ -1,67 +1,146 @@
-@import url('https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
   body {
-    font-family: 'Noto Sans', Arial, sans-serif;
-    background-color: #f5f7fa;
-    color: #1a1a2e;
-    font-size: 13px;
-  }
-  * {
-    border-radius: 0 !important;
+    background-color: #0A0F1C;
+    color: #E2E8F0;
+    font-family: 'Inter', system-ui, sans-serif;
+    font-size: 14px;
+    -webkit-font-smoothing: antialiased;
   }
 }
 
 @layer components {
-  .btn-gov {
-    @apply px-4 py-1.5 text-xs font-semibold bg-gov-blue text-white border border-gov-blue hover:bg-gov-navy transition-colors;
+  /* ── Glass card ──────────────────────────────── */
+  .ct-card {
+    @apply bg-ct-card border border-ct-border rounded-xl shadow-card transition-all duration-200;
   }
-  .btn-gov-outline {
-    @apply px-4 py-1.5 text-xs font-semibold bg-white text-gov-blue border border-gov-blue hover:bg-gov-table transition-colors;
-  }
-  .btn-gov-danger {
-    @apply px-4 py-1.5 text-xs font-semibold bg-red-700 text-white border border-red-700 hover:bg-red-800 transition-colors;
+  .ct-card-hover {
+    @apply ct-card hover:border-ct-cyan/30 hover:shadow-glow-cyan cursor-pointer;
   }
 
-  .gov-table {
-    @apply w-full text-xs border-collapse;
+  /* ── Stat card with gradient top border ─────── */
+  .ct-stat-card {
+    @apply ct-card p-5 relative overflow-hidden;
   }
-  .gov-table thead tr {
-    @apply bg-gov-table border-b-2 border-gov-blue;
+  .ct-stat-card::before {
+    content: '';
+    @apply absolute top-0 left-0 right-0 h-0.5;
   }
-  .gov-table thead th {
-    @apply px-3 py-2 text-left text-xs font-bold text-gov-navy uppercase tracking-wide border border-gov-border;
-  }
-  .gov-table tbody tr:nth-child(even) {
-    @apply bg-gov-stripe;
-  }
-  .gov-table tbody tr:hover {
-    @apply bg-blue-50;
-  }
-  .gov-table tbody td {
-    @apply px-3 py-2 border border-gov-border text-gray-700;
+  .ct-stat-card.cyan::before { @apply bg-gradient-cyan; }
+  .ct-stat-card.emerald::before { @apply bg-gradient-emerald; }
+  .ct-stat-card.saffron::before { @apply bg-gradient-saffron; }
+  .ct-stat-card.amber::before { @apply bg-gradient-amber; }
+
+  /* ── Glass effect ────────────────────────────── */
+  .ct-glass {
+    background: rgba(19, 29, 53, 0.8);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(30, 45, 74, 0.8);
+    border-radius: 12px;
   }
 
-  .gov-card {
-    @apply bg-white border border-gov-border shadow-sm;
+  /* ── Buttons ─────────────────────────────────── */
+  .ct-btn-primary {
+    @apply px-4 py-2 rounded-lg text-sm font-semibold bg-gradient-cyan text-ct-surface hover:opacity-90 transition-all duration-200 shadow-glow-cyan;
   }
-  .gov-card-header {
-    @apply bg-gov-navy px-4 py-2 text-white text-sm font-semibold flex items-center justify-between;
+  .ct-btn-secondary {
+    @apply px-4 py-2 rounded-lg text-sm font-semibold bg-ct-hover border border-ct-border text-ct-text hover:border-ct-cyan/50 transition-all duration-200;
+  }
+  .ct-btn-success {
+    @apply px-4 py-2 rounded-lg text-sm font-semibold bg-gradient-emerald text-white hover:opacity-90 transition-all duration-200;
+  }
+  .ct-btn-danger {
+    @apply px-4 py-2 rounded-lg text-sm font-semibold bg-ct-hover border border-ct-red/30 text-ct-red hover:bg-ct-red/10 transition-all duration-200;
+  }
+  .ct-btn-ghost {
+    @apply px-3 py-1.5 rounded-lg text-xs text-ct-muted hover:text-ct-text hover:bg-ct-hover transition-all duration-200;
   }
 
-  .badge-approved {
-    @apply px-2 py-0.5 text-xs font-semibold bg-green-100 text-green-800 border border-green-300;
+  /* ── Status badges (pill shaped) ────────────── */
+  .ct-badge {
+    @apply inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold;
   }
-  .badge-pending {
-    @apply px-2 py-0.5 text-xs font-semibold bg-amber-100 text-amber-800 border border-amber-300;
+  .ct-badge-pending {
+    @apply ct-badge bg-ct-amber/10 text-ct-amber border border-ct-amber/20;
   }
-  .badge-rejected {
-    @apply px-2 py-0.5 text-xs font-semibold bg-red-100 text-red-800 border border-red-300;
+  .ct-badge-approved {
+    @apply ct-badge bg-ct-emerald/10 text-ct-emerald border border-ct-emerald/20;
   }
-  .badge-verified {
-    @apply px-2 py-0.5 text-xs font-semibold bg-blue-100 text-blue-800 border border-blue-300;
+  .ct-badge-rejected {
+    @apply ct-badge bg-ct-red/10 text-ct-red border border-ct-red/20;
   }
+  .ct-badge-verified {
+    @apply ct-badge bg-ct-cyan/10 text-ct-cyan border border-ct-cyan/20;
+  }
+  .ct-badge-chain {
+    @apply ct-badge bg-ct-purple/10 text-ct-purple border border-ct-purple/20;
+  }
+
+  /* ── Table ───────────────────────────────────── */
+  .ct-table {
+    @apply w-full text-sm border-collapse;
+  }
+  .ct-table thead tr {
+    @apply border-b border-ct-border;
+  }
+  .ct-table thead th {
+    @apply px-4 py-3 text-left text-xs font-semibold text-ct-muted uppercase tracking-wider;
+  }
+  .ct-table tbody tr {
+    @apply border-b border-ct-border/50 hover:bg-ct-hover/50 transition-colors duration-150;
+  }
+  .ct-table tbody td {
+    @apply px-4 py-3 text-ct-text;
+  }
+
+  /* ── Input ───────────────────────────────────── */
+  .ct-input {
+    @apply bg-ct-surface border border-ct-border rounded-lg px-3 py-2 text-sm text-ct-text placeholder-ct-muted focus:outline-none focus:border-ct-cyan/50 focus:ring-1 focus:ring-ct-cyan/20 transition-all duration-200;
+  }
+
+  /* ── Section header ──────────────────────────── */
+  .ct-section-title {
+    @apply text-xs font-semibold text-ct-muted uppercase tracking-widest mb-3;
+  }
+
+  /* ── Glow dot (live indicator) ───────────────── */
+  .ct-live-dot {
+    @apply w-2 h-2 rounded-full bg-ct-emerald animate-pulse-slow shadow-glow-emerald;
+  }
+
+  /* ── Divider ─────────────────────────────────── */
+  .ct-divider {
+    @apply border-t border-ct-border my-4;
+  }
+
+  /* ── Code/hash display ───────────────────────── */
+  .ct-hash {
+    @apply font-mono text-xs text-ct-cyan bg-ct-surface px-2 py-0.5 rounded-md border border-ct-border;
+  }
+
+  /* Legacy compatibility classes used by existing pages before migration */
+  .font-heading { @apply font-sans; }
+  .bg-gov-surface { @apply bg-ct-surface; }
+  .bg-gov-slate { @apply bg-ct-hover; }
+  .text-text-primary { @apply text-ct-text; }
+  .text-text-secondary { @apply text-ct-subtle; }
+  .text-text-muted { @apply text-ct-muted; }
+  .gov-card { @apply ct-card p-3; }
+  .gov-card-header { @apply bg-ct-surface px-4 py-2 text-ct-text text-sm font-semibold flex items-center justify-between border-b border-ct-border; }
+  .gov-table { @apply ct-table; }
+  .gov-badge { @apply ct-badge; }
+  .gov-input { @apply ct-input; }
+  .gov-stat-label { @apply text-xs font-semibold uppercase tracking-wide text-ct-muted; }
+  .gov-stat-value { @apply text-2xl font-bold leading-none text-ct-text; }
+  .btn-gov { @apply ct-btn-primary text-xs py-1.5; }
+  .btn-gov-outline { @apply ct-btn-secondary text-xs py-1.5; }
+  .btn-gov-danger { @apply ct-btn-danger text-xs py-1.5; }
+  .badge-approved { @apply ct-badge-approved; }
+  .badge-pending { @apply ct-badge-pending; }
+  .badge-rejected { @apply ct-badge-rejected; }
+  .badge-verified { @apply ct-badge-verified; }
 }

@@ -46,10 +46,10 @@ export default function BlockchainAudit() {
 
   return (
     <div className="space-y-4">
-      <div className="mb-4 flex items-end justify-between">
+      <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-lg font-bold text-gov-navy border-b-2 border-gov-orange pb-2">Blockchain Audit Trail</h1>
-          <p className="text-xs text-gray-500 mt-1">Immutable records on Ethereum Sepolia - LandRegistry smart contract</p>
+          <h1 className="text-xl font-bold text-ct-text">Blockchain Audit Trail</h1>
+          <p className="text-ct-muted text-sm mt-0.5">Immutable records on Ethereum Sepolia - LandRegistry smart contract</p>
         </div>
         <a
           href={`${EXPLORER}/address/0x0172a95425f10712321eB82D22e69d1c78605a3C`}
@@ -89,7 +89,7 @@ export default function BlockchainAudit() {
       </div>
 
       {/* ── Live On-Chain Events ── */}
-      <div className="gov-card p-0">
+      <div className="ct-card p-0 overflow-hidden">
         <div className="px-4 py-3 border-b border-gov-border flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Blocks size={14} className="text-gov-blue" />
@@ -110,7 +110,7 @@ export default function BlockchainAudit() {
             <AlertCircle size={12} /> {eventsError}
           </div>
         )}
-        <table className="gov-table">
+        <table className="ct-table">
           <thead>
             <tr>
               <th>Event</th>
@@ -165,12 +165,12 @@ export default function BlockchainAudit() {
       </div>
 
 
-      <div className="gov-card p-0">
+      <div className="ct-card p-0 overflow-hidden">
         <div className="px-4 py-3 border-b border-gov-border flex items-center gap-2">
           <Shield size={14} className="text-gov-blue" />
           <h3 className="text-sm font-semibold text-gov-navy">Transaction Ledger</h3>
         </div>
-        <table className="gov-table">
+        <table className="ct-table">
           <thead>
             <tr>
               <th>Land ID</th>
@@ -188,11 +188,11 @@ export default function BlockchainAudit() {
                 <td>{l.landRequest?.owner_name || '—'}</td>
                 <td>
                   {(l.blockchain_hash && l.blockchain_hash.startsWith('0x') && l.blockchain_hash.length === 66) ? (
-                    <span className="gov-badge bg-accent-emerald/10 text-accent-emerald border border-accent-emerald/30">
+                    <span className="ct-badge-approved">
                       <CheckCircle2 size={10} className="mr-1" /> On-Chain
                     </span>
                   ) : (
-                    <span className="gov-badge bg-accent-amber/10 text-accent-amber border border-accent-amber/30">
+                    <span className="ct-badge-pending">
                       <Clock size={10} className="mr-1" /> Pending
                     </span>
                   )}

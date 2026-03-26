@@ -3,6 +3,7 @@ import GovLayout from './layouts/GovLayout';
 import PanchayatLayout from './layouts/PanchayatLayout';
 import NgoLayout from './layouts/NgoLayout';
 import Login from './pages/Login';
+import Landing from './pages/Landing';
 
 // Government pages
 import Dashboard from './pages/Dashboard';
@@ -48,6 +49,7 @@ function ProtectedRoute({ children, allowedRoles }) {
 function App() {
   return (
     <Routes>
+      <Route path="/" element={<Landing />} />
       <Route path="/login" element={<Login />} />
 
       {/* Government routes — protected */}
@@ -101,7 +103,6 @@ function App() {
         <Route path="payments"  element={<NgoPayments />} />
       </Route>
 
-      <Route path="/" element={<Navigate to="/login" replace />} />
     </Routes>
   );
 }
